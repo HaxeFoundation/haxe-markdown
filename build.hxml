@@ -1,0 +1,3 @@
+-main Markdown
+-neko src/run.n
+-cp src
