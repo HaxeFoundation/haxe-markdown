@@ -1,0 +1,6 @@
+version=munit
+src=test
+bin=bin/test
+report=bin/test-report
+hxml=test/targets.hxml
+classPaths=src
