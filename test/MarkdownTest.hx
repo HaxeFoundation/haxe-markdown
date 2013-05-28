@@ -143,4 +143,18 @@ Section 3',
 
 [google]: http://google.com',
 '<p>Click <a href="http://google.com">here</a></p>');
+
+	@Test function parses_example()
+	{
+		var doc = Markdown.markdownToHtml(MarkdownExample.minimatch);
+		Assert.isNotNull(doc);
+	}
+
+	@Test function leaves_inline_html() parses(
+'Write <code>some code</code> or something.',
+'<p>Write <code>some code</code> or something.</p>');
+
+	@Test function leaves_inline_html_links() parses(
+'A <a rel="custom" href="https://developer.mozilla.org/en/DOM/Document">link</a> to nowhere.',
+'<p>A <a rel="custom" href="https://developer.mozilla.org/en/DOM/Document">link</a> to nowhere.</p>');
 }

@@ -38,6 +38,8 @@ class InlineParser
 		new TextSyntax('&[#a-zA-Z0-9]*;'),
 		// Encode "&".
 		new TextSyntax('&', '&amp;'),
+		// Leave HTML as is.
+		new TextSyntax('</?\\w+.*?>'),
 		// Encode "<". (Why not encode ">" too? Gruber is toying with us.)
 		new TextSyntax('<', '&lt;'),
 		// Parse "**strong**" tags.

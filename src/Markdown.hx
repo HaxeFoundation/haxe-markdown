@@ -7,19 +7,32 @@ using Lambda;
 
 class Markdown
 {
-	#if sys
+	#if neko
 	public static function main()
 	{
-		var source = Sys.args()[0];
+		var args = Sys.args();
+
+		var last:String = (new haxe.io.Path(args[args.length-1])).toString();
+		var slash = last.substr(-1);
+		if (slash=="/"|| slash=="\\") 
+			last = last.substr(0,last.length-1);
+		if (sys.FileSystem.exists(last) && sys.FileSystem.isDirectory(last)) {
+			Sys.setCwd(last);
+		}
+
+		var source = args[0];
+		if (source == "-f") source = sys.io.File.getContent(args[1]);
 		
 		try
 		{
 			var output = markdownToHtml(source);
 			Sys.print(output);
+			Sys.exit(0);
 		}
 		catch (e:Dynamic)
 		{
 			Sys.print("Error: " + haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+			Sys.exit(1);
 		}
 	}
 

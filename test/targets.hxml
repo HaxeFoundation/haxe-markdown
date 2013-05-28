@@ -1,27 +1,27 @@
-## Flash 9+
--main TestMain
--lib munit
--lib mlib
--lib hamcrest
--cp src
+# ## Flash 9+
+# -main TestMain
+# -lib munit
+# -lib mlib
+# -lib hamcrest
+# -cp src
 
--cp test
--swf-version 11
--swf bin/test/as3_test.swf
+# -cp test
+# -swf-version 11
+# -swf bin/test/as3_test.swf
 
---next
+# --next
 
-## JavaScript
--main TestMain
--lib munit
--lib mlib
--lib hamcrest
--cp src
+# ## JavaScript
+# -main TestMain
+# -lib munit
+# -lib mlib
+# -lib hamcrest
+# -cp src
 
--cp test
--js bin/test/js_test.js
+# -cp test
+# -js bin/test/js_test.js
 
---next
+# --next
 
 ## Neko
 -main TestMain
