@@ -378,12 +378,7 @@ class GitHubCodeBlockSyntax extends BlockSyntax
 		var syntax = pattern.matched(1);
 		var childLines = parseChildLines(parser);
 		
-		// Escape the code.
-		var escaped = childLines.join('\n');
-		escaped = if (syntax == "haxe") Markdown.colorize(escaped);
-		else escaped.htmlEscape();
-
-		return new ElementNode('pre', [ElementNode.text('code', escaped)]);
+		return new ElementNode('pre', [ElementNode.text('code', childLines.join('\n').htmlEscape())]);
 	}
 }
 

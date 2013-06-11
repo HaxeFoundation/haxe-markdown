@@ -7,7 +7,7 @@ using Lambda;
 
 class Markdown
 {
-	#if neko
+	#if sys
 	public static function main()
 	{
 		var args = Sys.args();
@@ -34,18 +34,6 @@ class Markdown
 			Sys.print("Error: " + haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
 			Sys.exit(1);
 		}
-	}
-
-	public static function colorize(source:String):String
-	{
-		var process = new sys.io.Process("neko", ["colorize.n", source]);
-		return if (process.exitCode() == 0) process.stdout.readAll().toString();
-		else "Error: Process error";
-	}
-	#else
-	public static function colorize(source:String):String
-	{
-		return source;
 	}
 	#end
 

@@ -1,0 +1,10 @@
+{
+	"name": "markdown",
+	"url" : "https://github.com/dpeek/haxe-markdown",
+	"license": "MIT",
+	"tags": [],
+	"description": "A markdown library for Haxe",
+	"version": "1.0.0-alpha",
+	"releasenote": "Initial release",
+	"contributors": ["dpeek"]
+}
