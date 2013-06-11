@@ -54,15 +54,22 @@ class Markdown
 		// create document
 		var document = new Document();
 
-		// replace windows line endings with unix, and split
-		var lines = ~/\n\r/g.replace(markdown, '\n').split("\n");
+		try
+		{
+			// replace windows line endings with unix, and split
+			var lines = ~/\n\r/g.replace(markdown, '\n').split("\n");
 
-		// parse ref links
-		document.parseRefLinks(lines);
+			// parse ref links
+			document.parseRefLinks(lines);
 
-		// parse ast
-		var blocks = document.parseLines(lines);
-		return renderHtml(blocks);
+			// parse ast
+			var blocks = document.parseLines(lines);
+			return renderHtml(blocks);
+		}
+		catch (e:Dynamic)
+		{
+			return '<pre>$e</pre>';
+		}
 	}
 
 	public static function renderHtml(blocks:Array<Node>):String
