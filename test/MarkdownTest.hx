@@ -164,4 +164,12 @@ Section 3',
 |: ------- |: ------  :| ------- :|
 | `Col 1`  |   Col 2   |    Col 3 |',
 '<table><thead><th>Head 1</th><th align="center">Head 2</th><th align="right">Head 3</th></thead><tbody><tr><td><code>Col 1</code></td><td align="center">Col 2</td><td align="right">Col 3</td></tr></tbody></table>');
+
+	@Test function parses_code_block_when_simn_adds_extra_whitespace_after_backticks() parses(
+'```haxe
+foo;
+``` 
+text',
+'<pre><code>foo;</code></pre>
+<p>text</p>');
 }

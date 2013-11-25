@@ -92,7 +92,7 @@ class BlockSyntax
 	/**
 		GitHub style triple quoted code block.
 	**/
-	static var RE_CODE = new EReg('^```(\\w*)$', '');
+	static var RE_CODE = new EReg('^```(\\w*)\\s*$', '');
 
 	/**
 		Three or more hyphens, asterisks or underscores by themselves. Note that
