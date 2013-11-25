@@ -157,4 +157,23 @@ Section 3',
 	@Test function leaves_inline_html_links() parses(
 'A <a rel="custom" href="https://developer.mozilla.org/en/DOM/Document">link</a> to nowhere.',
 '<p>A <a rel="custom" href="https://developer.mozilla.org/en/DOM/Document">link</a> to nowhere.</p>');
+
+	@Test function parses_tables() parses(
+'
+| Head 1   |   Head 2  |   Head 3 |
+|: ------- |: ------  :| ------- :|
+| `Col 1`  |   Col 2   |    Col 3 |',
+'<table><thead><th>Head 1</th><th align="center">Head 2</th><th align="right">Head 3</th></thead><tbody><tr><td><code>Col 1</code></td><td align="center">Col 2</td><td align="right">Col 3</td></tr></tbody></table>');
+
+	@Test function parses_code_block_when_simn_adds_extra_whitespace_after_backticks() parses(
+'```haxe
+foo;
+``` 
+text',
+'<pre><code>foo;</code></pre>
+<p>text</p>');
+
+	@Test function no_greedy_inline_styles() parses(
+'NEGATIVE_INFINITY or POSITIVE_INFINITY',
+'<p>NEGATIVE_INFINITY or POSITIVE_INFINITY</p>');
 }

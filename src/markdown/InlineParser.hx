@@ -49,9 +49,7 @@ class InlineParser
 		// Parse "*emphasis*" tags.
 		new TagSyntax('\\*', 'em'),
 		// Parse "_emphasis_" tags.
-		// TODO(rnystrom): Underscores in the middle of a word should not be
-		// parsed as emphasis like_in_this.
-		new TagSyntax('_', 'em'),
+		new TagSyntax('\\b_', 'em', '_\\b'),
 		// Parse inline code within double backticks: "``code``".
 		new CodeSyntax('``\\s?((?:.|\\n)*?)\\s?``'),
 		// Parse inline code within backticks: "`code`".
