@@ -141,6 +141,7 @@ class BlockSyntax
 				new HorizontalRuleSyntax(),
 				new UnorderedListSyntax(),
 				new OrderedListSyntax(),
+				new TableSyntax(),
 				new ParagraphSyntax()
 			];
 		}
@@ -675,5 +676,87 @@ class OrderedListSyntax extends ListSyntax
 	public function new()
 	{
 		super('ol');
+	}
+}
+
+class TableSyntax extends BlockSyntax
+{
+	static var TABLE_PATTERN = new EReg('^(.+? +:?\\|:? +)+(.+)$', '');
+	static var CELL_PATTERN = new EReg('(\\|)?([^\\|]+)(\\|)?', 'g');
+
+	public function new()
+	{
+		super();
+	}
+
+	override function get_pattern():EReg
+	{
+		return TABLE_PATTERN;
+	}
+
+	override function get_canEndBlock()
+	{
+		return false;
+	}
+  
+	override public function parse(parser:BlockParser):Node
+	{
+		var lines = [];
+
+		while (!parser.isDone && parser.matches(TABLE_PATTERN))
+		{
+			lines.push(parser.current);
+			parser.advance();
+		}
+		
+		var heads:Array<Node> = [];
+		var rows:Array<Node> = [];
+		var align = [];
+
+		var headLine = lines.shift();
+		var alignLine = lines.shift();
+
+		// get alignment from separator line
+		var aligns = [];
+		CELL_PATTERN.map(alignLine, function(e){
+			var text = e.matched(2);
+			var align = text.charAt(0) == ':' 
+				? text.charAt(text.length - 1) == ':' ? 'center' : 'left'
+				: text.charAt(text.length - 1) == ':' ? 'right' : 'left';
+			aligns.push(align);
+			return '';
+		});
+		
+		// create thead
+		var index = 0;
+		CELL_PATTERN.map(headLine, function(e){
+			var text = StringTools.trim(e.matched(2));
+			var cell = new ElementNode('th', parser.document.parseInline(text));
+			if (aligns[index] != 'left') cell.attributes.set('align', aligns[index]);
+			heads.push(cell);
+			index += 1;
+			return '';
+		});
+
+		for (line in lines)
+		{
+			var cols:Array<Node> = [];
+			rows.push(new ElementNode('tr', cols));
+
+			var index = 0;
+			CELL_PATTERN.map(line, function(e){
+				var text = StringTools.trim(e.matched(2));
+				var cell = new ElementNode('td', parser.document.parseInline(text));
+				if (aligns[index] != 'left') cell.attributes.set('align', aligns[index]);
+				cols.push(cell);
+				index += 1;
+				return '';
+			});
+		}
+
+		return new ElementNode('table', [
+			new ElementNode('thead', heads), 
+			new ElementNode('tbody', rows)
+		]);
 	}
 }

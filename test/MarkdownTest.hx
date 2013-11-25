@@ -157,4 +157,11 @@ Section 3',
 	@Test function leaves_inline_html_links() parses(
 'A <a rel="custom" href="https://developer.mozilla.org/en/DOM/Document">link</a> to nowhere.',
 '<p>A <a rel="custom" href="https://developer.mozilla.org/en/DOM/Document">link</a> to nowhere.</p>');
+
+	@Test function parses_tables() parses(
+'
+| Head 1   |   Head 2  |   Head 3 |
+|: ------- |: ------  :| ------- :|
+| `Col 1`  |   Col 2   |    Col 3 |',
+'<table><thead><th>Head 1</th><th align="center">Head 2</th><th align="right">Head 3</th></thead><tbody><tr><td><code>Col 1</code></td><td align="center">Col 2</td><td align="right">Col 3</td></tr></tbody></table>');
 }
