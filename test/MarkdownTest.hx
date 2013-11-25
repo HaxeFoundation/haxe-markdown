@@ -172,4 +172,8 @@ foo;
 text',
 '<pre><code>foo;</code></pre>
 <p>text</p>');
+
+	@Test function no_greedy_inline_styles() parses(
+'NEGATIVE_INFINITY or POSITIVE_INFINITY',
+'<p>NEGATIVE_INFINITY or POSITIVE_INFINITY</p>');
 }
