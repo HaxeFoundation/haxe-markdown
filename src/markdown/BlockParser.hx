@@ -379,7 +379,11 @@ class GitHubCodeBlockSyntax extends BlockSyntax
 		var syntax = pattern.matched(1);
 		var childLines = parseChildLines(parser);
 		
-		return new ElementNode('pre', [ElementNode.text('code', childLines.join('\n').htmlEscape())]);
+		var code = ElementNode.text('code', childLines.join('\n').htmlEscape());
+		if (syntax != null && syntax.length > 0) {
+			code.attributes.set('class', 'prettyprint '+syntax);
+		}
+		return new ElementNode('pre', [code]);
 	}
 }
 
