@@ -722,14 +722,16 @@ class TableSyntax extends BlockSyntax
 
 		// get alignment from separator line
 		var aligns = [];
-		CELL_PATTERN.map(alignLine, function(e){
-			var text = e.matched(2);
-			var align = text.charAt(0) == ':' 
-				? text.charAt(text.length - 1) == ':' ? 'center' : 'left'
-				: text.charAt(text.length - 1) == ':' ? 'right' : 'left';
-			aligns.push(align);
-			return '';
-		});
+		if (alignLine != null) {
+			CELL_PATTERN.map(alignLine, function(e){
+				var text = e.matched(2);
+				var align = text.charAt(0) == ':' 
+					? text.charAt(text.length - 1) == ':' ? 'center' : 'left'
+					: text.charAt(text.length - 1) == ':' ? 'right' : 'left';
+				aligns.push(align);
+				return '';
+			});
+		}
 		
 		// create thead
 		var index = 0;
