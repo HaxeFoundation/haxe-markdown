@@ -176,4 +176,12 @@ text',
 	@Test function no_greedy_inline_styles() parses(
 'NEGATIVE_INFINITY or POSITIVE_INFINITY',
 '<p>NEGATIVE_INFINITY or POSITIVE_INFINITY</p>');
+
+	@Test function transform_inline_links() parses(
+'<http://haxe.org>',
+'<p><a href="http://haxe.org">http://haxe.org</a></p>');
+
+	@Test function transform_inline_links_without_brackets() parses(
+'http://haxe.org',
+'<p><a href="http://haxe.org">http://haxe.org</a></p>');
 }
