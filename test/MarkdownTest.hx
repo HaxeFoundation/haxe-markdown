@@ -2,9 +2,9 @@ import massive.munit.Assert;
 
 class MarkdownTest
 {
-	function parses(markdown:String, html:String)
+	function parses(markdown:String, html:String, ?pos:haxe.PosInfos)
 	{
-		Assert.areEqual(html, Markdown.markdownToHtml(markdown));
+		Assert.areEqual(html, Markdown.markdownToHtml(markdown), pos);
 	}
 
 	@Test function wraps_in_paragraph() parses(
