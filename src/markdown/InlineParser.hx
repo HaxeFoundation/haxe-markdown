@@ -23,6 +23,7 @@ class InlineParser
 
 		// TODO(amouravski): this regex will glom up any custom syntaxes unless
 		// they're at the beginning.
+		new AutolinkSyntaxWithoutBrackets(),
 		new TextSyntax('\\s*[A-Za-z0-9]+'),
 
 		// The real syntaxes.
@@ -263,6 +264,33 @@ class AutolinkSyntax extends InlineSyntax
 	{
 		// TODO(rnystrom): Make case insensitive.
 		super('<((http|https|ftp)://[^>]*)>');
+	}
+
+	override function onMatch(parser:InlineParser):Bool
+	{
+		var url = pattern.matched(1);
+
+		var anchor = ElementNode.text('a', url.htmlEscape());
+		anchor.attributes.set('href', url);
+		parser.addNode(anchor);
+
+		return true;
+	}
+}
+
+/**
+	Matches autolinks like `http://foo.com`.
+**/
+class AutolinkSyntaxWithoutBrackets extends InlineSyntax
+{
+	public function new()
+	{
+		// TODO(rnystrom): Make case insensitive.
+		super('\\b((http|https|ftp)://[^\\s]*)\\b');
+	}
+
+	override function tryMatch(parser) {
+		return super.tryMatch(parser);
 	}
 
 	override function onMatch(parser:InlineParser):Bool
