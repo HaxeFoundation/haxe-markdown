@@ -1,0 +1,34 @@
+# This dict contains configurations which users may want to, or are required to personalize.
+# Some values can be omitted and have defaults set for them on `md_testsuite.py`.
+config = dict(
+
+    # Required for GFM.
+    # Generate token on GitHub website on Profile > Applications > Generate
+    # Turn off all abilities by unchecking all boxes: none are necessary for markdown compilation.
+    #gfm_oauth_token = '',
+
+    # Listed methods will be excluded from the `run-tests.py` all tests invocation.
+    # `[]` to run all engines.
+    #run_all_disable = [
+        #'blackfriday',
+        #'gfm',
+        #'hoedown',
+        #'kramdown',
+        #'lunamark',
+        #'markdown2',
+        #'markdown_pl',
+        #'marked',
+        #'markdown_pl',
+        #'marked',
+        #'maruku',
+        #'md2html',
+        #'multimarkdown',
+        #'pandoc',
+        #'rdiscount',
+        #'redcarpet',
+        #'showdown',
+    #],
+
+    # Timeout in seconds.
+    #timeout = 5
+)
