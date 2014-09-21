@@ -22,7 +22,9 @@ class HtmlRenderer implements NodeVisitor
 
 	public function visitText(text:TextNode):Void
 	{
-		buffer.add(text.text);
+		var content = text.text;
+		content = StringTools.replace(content, '\t', '    ');
+		buffer.add(content);
 	}
 
 	public function visitElementBefore(element:ElementNode):Bool

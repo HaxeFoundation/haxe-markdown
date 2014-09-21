@@ -1,3 +1,4 @@
 -main Markdown
 -neko src/run.n
 -cp src
+-cmd neko src/run.n -f test/markdown-testsuite/tests/unordered-list-with-indented-content.md

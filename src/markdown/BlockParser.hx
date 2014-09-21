@@ -87,7 +87,7 @@ class BlockSyntax
 	/**
 		A line indented four spaces. Used for code blocks and lists.
 	**/
-	static var RE_INDENT = new EReg('^(?:		|\\t)(.*)$', '');
+	static var RE_INDENT = new EReg('^(?:    |\t)(.*)$', '');
 
 	/**
 		GitHub style triple quoted code block.
@@ -464,7 +464,7 @@ class ParagraphSyntax extends BlockSyntax
 		// Eat until we hit something that ends a paragraph.
 		while (!BlockSyntax.isAtBlockEnd(parser))
 		{
-			childLines.push(parser.current);
+			childLines.push(StringTools.ltrim(parser.current));
 			parser.advance();
 		}
 
@@ -509,7 +509,6 @@ class ListSyntax extends BlockSyntax
 			return pattern.match(parser.current);
 		}
 
-		var afterEmpty = false;
 		while (!parser.isDone)
 		{
 			if (tryMatch(BlockSyntax.RE_EMPTY))
@@ -635,12 +634,25 @@ class ListSyntax extends BlockSyntax
 					}
 				}
 			}
-
+			
 			// Parse the item as a block or inline.
 			if (blockItem)
 			{
 				// Block list item.
 				var children = parser.document.parseLines(item.lines);
+
+				// if we have a single p child we might have been forced into block
+				// mode by line breaks. if not forceBlock (empty line before/after)
+				// we can use text of p as li child <li><p>foo</p></li> -> <li>foo</li>
+				if (!item.forceBlock && children.length == 1)
+				{
+					if (Std.is(children[0], ElementNode))
+					{
+						var node:ElementNode = cast children[0];
+						if (node.tag == 'p') children = node.children;
+					}
+				}
+
 				itemNodes.push(new ElementNode('li', children));
 			}
 			else
