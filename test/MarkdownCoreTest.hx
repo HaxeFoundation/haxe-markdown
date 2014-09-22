@@ -9,7 +9,7 @@ class MarkdownCoreTest
 
 	static function clean(str:String)
 	{
-		return NO_TIME_FOR.map(str, function (e) return e.matched(1) + e.matched(3));
+		return StringTools.trim(NO_TIME_FOR.map(str, function (e) return e.matched(1) + e.matched(3)));
 	}
 
 	public static function parses(markdown:String, expected:String, testName:String, ?pos:haxe.PosInfos)
