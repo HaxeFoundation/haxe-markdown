@@ -24,12 +24,15 @@ class InlineParser
 		// TODO(amouravski): this regex will glom up any custom syntaxes unless
 		// they're at the beginning.
 		new AutolinkSyntaxWithoutBrackets(),
+		new TextSyntax(' {2,}\n', '<br />\n'),
 		new TextSyntax('\\s*[A-Za-z0-9]+'),
 
 		// The real syntaxes.
 
 		new AutolinkSyntax(),
 		new LinkSyntax(),
+		new ImgSyntax(),
+
 		// "*" surrounded by spaces is left alone.
 		new TextSyntax(' \\* '),
 		// "_" surrounded by spaces is left alone.
@@ -157,14 +160,19 @@ class InlineParser
 			if ((nodes.length > 0) && (Std.is(nodes[nodes.length - 1], TextNode)))
 			{
 				var lastNode:TextNode = cast nodes[nodes.length - 1];
-				var newNode = new TextNode('${lastNode.text}$text');
+				var newNode = createText('${lastNode.text}$text');
 				nodes[nodes.length - 1] = newNode;
 			}
 			else
 			{
-				nodes.push(new TextNode(text));
+				nodes.push(createText(text));
 			}
 		}
+	}
+
+	public function createText(text:String)
+	{
+		return new TextNode(unescape(text));
 	}
 
 	public function addNode(node:Node)
@@ -189,6 +197,13 @@ class InlineParser
 	{
 		pos += length;
 		start = pos;
+	}
+
+	public function unescape(text:String):String
+	{
+  		text = ~/\\([\\`*_{}[\]()#+-.!])/g.replace(text, '$1');
+		text = StringTools.replace(text, '\t', '    ');
+		return text;
 	}
 }
 
@@ -250,7 +265,7 @@ class TextSyntax extends InlineSyntax
 		}
 
 		// Insert the substitution.
-		parser.addNode(new TextNode(substitute));
+		parser.addNode(parser.createText(substitute));
 		return true;
 	}
 }
@@ -435,6 +450,115 @@ class LinkSyntax extends TagSyntax
 		}
 
 		parser.addNode(anchor);
+		return true;
+	}
+}
+
+/**
+	Matches inline links like `[blah] [id]` and `[blah] (url)`.
+**/
+class ImgSyntax extends TagSyntax
+{
+	var linkResolver:Resolver;
+
+	// The regex for the end of a link needs to handle both reference style and
+	// inline styles as well as optional titles for inline links. To make that
+	// a bit more palatable, this breaks it into pieces.
+	static var linkPattern = '\\](?:('+
+		'\\s?\\[([^\\]]*)\\]'+
+		'|'+
+		'\\s?\\(([^ )]+)(?:[ ]*"([^"]+)"|)\\)'+
+		')|)';
+
+	// The groups matched by this are:
+	// 1: Will be non-empty if it's either a ref or inline link. Will be empty
+	//    if it's just a bare pair of square brackets with nothing after them.
+	// 2: Contains the id inside [] for a reference-style link.
+	// 3: Contains the URL for an inline link.
+	// 4: Contains the title, if present, for an inline link.
+	public function new(?linkResolver:Resolver)
+	{
+		super('!\\[', null, linkPattern);
+		this.linkResolver = linkResolver;
+	}
+
+	override function onMatchEnd(parser:InlineParser, state:TagState):Bool
+	{
+		var url:String;
+		var title:String;
+
+		// If we didn't match refLink or inlineLink, then it means there was
+		// nothing after the first square bracket, so it isn't a normal markdown
+		// link at all. Instead, we allow users of the library to specify a special
+		// resolver function ([linkResolver]) that may choose to handle
+		// this. Otherwise, it's just treated as plain text.
+		if ((endPattern.matched(1) == null) || (endPattern.matched(1) == ''))
+		{
+			if (linkResolver == null) return false;
+
+			// Only allow implicit links if the content is just text.
+			// TODO(rnystrom): Do we want to relax this?
+			if (state.children.length != 1) return false;
+			if (!Std.is(state.children[0], TextNode)) return false;
+
+			var link:TextNode = cast state.children[0];
+
+			// See if we have a resolver that will generate a link for us.
+			var node = linkResolver(link.text);
+			if (node == null) return false;
+
+			parser.addNode(node);
+			return true;
+		}
+
+		if ((endPattern.matched(3) != null) && (endPattern.matched(3) != '')) {
+			// Inline link like [foo](url).
+			url = endPattern.matched(3);
+			title = endPattern.matched(4);
+
+			// For whatever reason, markdown allows angle-bracketed URLs here.
+			if (url.startsWith('<') && url.endsWith('>'))
+			{
+				url = url.substring(1, url.length - 1);
+			}
+		}
+		else
+		{
+			// Reference link like [foo] [bar].
+			var id = endPattern.matched(2);
+			if (id == '')
+			{
+				// The id is empty ("[]") so infer it from the contents.
+				id = parser.source.substring(state.startPos + 1, parser.pos);
+			}
+
+			// References are case-insensitive.
+			id = id.toLowerCase();
+
+			// Look up the link.
+			var link = parser.document.refLinks.get(id);
+
+			// If it's an unknown link just emit plaintext.
+			if (link == null) return false;
+
+			url = link.url;
+			title = link.title;
+		}
+
+		var img = new ElementNode('img', null);
+		img.attributes.set('src', url.htmlEscape());
+		if (state.children.length == 1 && Std.is(state.children[0], TextNode))
+		{
+			var alt:TextNode = cast state.children[0];
+			img.attributes.set('alt', alt.text);
+		}
+		
+		if ((title != null) && (title != ''))
+		{
+			img.attributes.set('title', title.htmlEscape());
+		}
+
+		parser.addNode(img);
 		return true;
 	}
 }

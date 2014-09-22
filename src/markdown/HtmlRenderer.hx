@@ -22,9 +22,7 @@ class HtmlRenderer implements NodeVisitor
 
 	public function visitText(text:TextNode):Void
 	{
-		var content = text.text;
-		content = StringTools.replace(content, '\t', '    ');
-		buffer.add(content);
+		buffer.add(text.text);
 	}
 
 	public function visitElementBefore(element:ElementNode):Bool
@@ -41,7 +39,7 @@ class HtmlRenderer implements NodeVisitor
 		// TODO(rnystrom): This assumes keys returns a fresh mutable
 		// collection.
 		var attributeNames = [for (k in element.attributes.keys()) k];
-		attributeNames.sort(Reflect.compare);
+		attributeNames.sort(sortAttributes);
 		for (name in attributeNames)
 		{
 			buffer.add(' $name="${element.attributes.get(name)}"');
@@ -63,5 +61,15 @@ class HtmlRenderer implements NodeVisitor
 	public function visitElementAfter(element:ElementNode):Void
 	{
 		buffer.add('</${element.tag}>');
+	}
+
+	static var attributeOrder = ['src', 'alt'];
+
+	static function sortAttributes(a:String, b:String)
+	{
+		var ia = attributeOrder.indexOf(a);
+		var ib = attributeOrder.indexOf(a);
+		if (ia > -1 && ib > -1) return ia - ib;
+		return Reflect.compare(a, b);
 	}
 }

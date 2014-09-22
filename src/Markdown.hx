@@ -45,7 +45,7 @@ class Markdown
 		try
 		{
 			// replace windows line endings with unix, and split
-			var lines = ~/\n\r/g.replace(markdown, '\n').split("\n");
+			var lines = ~/(\r\n|\r)/g.replace(markdown, '\n').split("\n");
 
 			// parse ref links
 			document.parseRefLinks(lines);
@@ -92,9 +92,10 @@ class Document
 		var quote = '"[^"]+"';		// Title in "double quotes".
 		var apos = "'[^']+'";		// Title in 'single quotes'.
 		var paren = "\\([^)]+\\)";	// Title in (parentheses).
+		var titles =	new EReg('($quote|$apos|$paren)', '');
 		var link = new EReg(
 			'$indent$id:\\s+(\\S+)\\s*($quote|$apos|$paren|)\\s*$', '');
-		// link = new EReg('\\[(google)\\]: (http://google.com)\\s*()','');
+
 
 		for (i in 0...lines.length)
 		{
@@ -104,7 +105,17 @@ class Document
 			var id = link.matched(1);
 			var url = link.matched(2);
 			var title = link.matched(3);
-			// Sys.println(id);
+			
+			if (url.startsWith('<') && url.endsWith('>'))
+				url = url.substr(1, url.length - 2);
+
+			// next line could be a title, apparently
+			if (title == '' && lines[i + 1] != null && titles.match(lines[i + 1]))
+			{
+				title = titles.matched(1);
+				lines[i + 1] = '';
+			}
+
 			if (title == '')
 			{
 				// No title.

@@ -279,6 +279,40 @@ class BlockquoteSyntax extends BlockSyntax
 		return BlockSyntax.RE_BLOCKQUOTE;
 	}
 
+	override public function parseChildLines(parser:BlockParser):Array<String>
+	{
+		var childLines = [];
+
+		while (!parser.isDone)
+		{
+			if (pattern.match(parser.current))
+			{
+				childLines.push(pattern.matched(1));
+				parser.advance();
+			}
+			else
+			{
+				// If there's a blockquote, then a newline, then a blockquote, keep the
+				// blockquotes together.
+				var nextMatch = parser.next != null ? pattern.match(parser.next) : false;
+
+				if (parser.current.trim() == '' && nextMatch)
+				{
+					childLines.push('');
+					childLines.push(pattern.matched(1));
+					parser.advance();
+					parser.advance();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+
+		return childLines;
+	}
+
 	override public function parse(parser:BlockParser):Node
 	{
 		var childLines = parseChildLines(parser);
