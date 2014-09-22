@@ -2,9 +2,9 @@ import massive.munit.Assert;
 
 class MarkdownTest
 {
-	function parses(markdown:String, html:String)
+	function parses(markdown:String, html:String, ?pos:haxe.PosInfos)
 	{
-		Assert.areEqual(html, Markdown.markdownToHtml(markdown));
+		Assert.areEqual(html, Markdown.markdownToHtml(markdown), pos);
 	}
 
 	@Test function wraps_in_paragraph() parses(
@@ -166,7 +166,7 @@ Section 3',
 '<table><thead><th>Head 1</th><th align="center">Head 2</th><th align="right">Head 3</th></thead><tbody><tr><td><code>Col 1</code></td><td align="center">Col 2</td><td align="right">Col 3</td></tr></tbody></table>');
 
 	@Test function parses_code_block_when_simn_adds_extra_whitespace_after_backticks() parses(
-'```haxe
+'```
 foo;
 ``` 
 text',
@@ -176,4 +176,12 @@ text',
 	@Test function no_greedy_inline_styles() parses(
 'NEGATIVE_INFINITY or POSITIVE_INFINITY',
 '<p>NEGATIVE_INFINITY or POSITIVE_INFINITY</p>');
+
+	@Test function transform_inline_links() parses(
+'<http://haxe.org>',
+'<p><a href="http://haxe.org">http://haxe.org</a></p>');
+
+	@Test function transform_inline_links_without_brackets() parses(
+'http://haxe.org',
+'<p><a href="http://haxe.org">http://haxe.org</a></p>');
 }
