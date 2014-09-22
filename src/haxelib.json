@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": [],
 	"description": "A markdown library for Haxe",
-	"version": "1.0.0-alpha",
+	"version": "1.0.0",
 	"releasenote": "Initial release",
 	"contributors": ["dpeek"]
 }
