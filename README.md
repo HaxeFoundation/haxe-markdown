@@ -17,7 +17,7 @@ Clone the OpenFL repository:
 
     git clone https://github.com/dpeek/haxe-markdown
 
-Tell haxelib where your development copy of OpenFL is installed:
+Tell haxelib where your development copy of haxe-markdown is installed:
 
     haxelib dev markdown haxe-markdown
 
