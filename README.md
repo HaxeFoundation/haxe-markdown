@@ -1,12 +1,12 @@
 
 haxe-markdown
 =============
-A Markdown parser in Haxe, ported from [Dart Markdown](https://github.com/dpeek/dart-markdown).
+A Markdown parser in Haxe, ported from [dart-markdown](https://github.com/dpeek/dart-markdown).
 
 Introduction
 ------------
 
-_Markdown_, created by John Gruber, author of the [Daring Fireball blog](http://daringfireball.net/). The original source of Markdown can be found at [Daring Fireball - Markdown](http://daringfireball.net/projects/markdown/).
+_Markdown_, created by John Gruber, author of the [Daring Fireball blog](http://daringfireball.net). The original source of Markdown can be found at [Daring Fireball - Markdown](http://daringfireball.net/projects/markdown).
 
 Installation
 ------------
