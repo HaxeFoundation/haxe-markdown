@@ -74,10 +74,12 @@ class Document
 	public var refLinks:Map<String, Link>;
 	public var inlineSyntaxes:Array<InlineSyntax>;
 	public var linkResolver:Resolver;
+	public var codeBlockSyntaxes:Map<String, String -> String>;
 
 	public function new()
 	{
 		refLinks = new Map();
+		codeBlockSyntaxes = new Map();
 		inlineSyntaxes = [];
 	}
 

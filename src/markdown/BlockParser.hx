@@ -409,14 +409,21 @@ class GitHubCodeBlockSyntax extends BlockSyntax
 	override public function parse(parser:BlockParser):Node
 	{
 		// Get the syntax identifier, if there is one.
-		// pattern.match(parser.current);
 		var syntax = pattern.matched(1);
 		var childLines = parseChildLines(parser);
 		
-		var code = ElementNode.text('code', childLines.join('\n').htmlEscape());
-		if (syntax != null && syntax.length > 0) {
-			code.attributes.set('class', 'prettyprint '+syntax);
+		var code:ElementNode = null;
+		var source = childLines.join('\n');
+
+		if (parser.document.codeBlockSyntaxes.exists(syntax)) {
+			var format = parser.document.codeBlockSyntaxes.get(syntax);
+			code = ElementNode.text('code', format(source));
+		} else {
+			code = ElementNode.text('code', source.htmlEscape());
+			if (syntax != null && syntax.length > 0)
+				code.attributes.set('class', 'prettyprint '+syntax);
 		}
+
 		return new ElementNode('pre', [code]);
 	}
 }
