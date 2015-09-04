@@ -1,3 +1,0 @@
-[submodule "test/markdown-testsuite"]
-	path = test/markdown-testsuite
-	url = https://github.com/karlcow/markdown-testsuite.git
