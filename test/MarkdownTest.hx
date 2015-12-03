@@ -11,6 +11,10 @@ class MarkdownTest
 'Hello World',
 '<p>Hello World</p>');
 
+	@Test function skips_comments() parses(
+'Hello World <!--this is a comment-->',
+'<p>Hello World <!--this is a comment--></p>');
+
 	@Test function wraps_in_paragraphs() parses(
 'Hello World
 
@@ -168,7 +172,7 @@ Section 3',
 	@Test function parses_code_block_when_simn_adds_extra_whitespace_after_backticks() parses(
 '```
 foo;
-``` 
+```
 text',
 '<pre><code>foo;</code></pre>
 <p>text</p>');
