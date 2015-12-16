@@ -1,0 +1,18 @@
+language: haxe
+
+haxe:
+  - "3.2.0"
+  - development
+
+addons:
+  apt:
+    packages:
+      - python3
+
+install:
+  - haxelib install munit
+
+script:
+  - haxe build.hxml
+  - haxelib run munit t
+  - haxe commonmark.hxml && git clone https://github.com/jgm/CommonMark && cd CommonMark && python3 test/spec_tests.py --program ../bin/cmarktest
