@@ -738,7 +738,7 @@ class OrderedListSyntax extends ListSyntax
 
 class TableSyntax extends BlockSyntax
 {
-	static var TABLE_PATTERN = new EReg('^(.+? +:?\\|:? +)+(.+)$', '');
+	static var TABLE_PATTERN = new EReg('^(.+?:?\\|:?)+(.+)$', '');
 	static var CELL_PATTERN = new EReg('(\\|)?([^\\|]+)(\\|)?', 'g');
 
 	public function new()
