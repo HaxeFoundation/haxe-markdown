@@ -201,7 +201,7 @@ class InlineParser
 
 	public function unescape(text:String):String
 	{
-  		text = ~/\\([\\`*_{}[\]()#+-.!])/g.replace(text, '$1');
+		text = ~/\\([\\`*_{}\[\]()#+-.!])/g.replace(text, '$1');
 		text = StringTools.replace(text, '\t', '    ');
 		return text;
 	}
