@@ -77,7 +77,7 @@ class BlockSyntax
 	/**
 		Leading (and trailing) `#` define atx-style headers.
 	**/
-	static var RE_HEADER = new EReg('^(#{1,6})(.*?)#*$', '');
+	static var RE_HEADER = new EReg('^(#{1,6})(.*?)( +#* *)?$', '');
 
 	/**
 		The line starts with `>` with one optional space after.
