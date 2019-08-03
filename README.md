@@ -21,7 +21,7 @@ Markdown.markdownToHtml(markdown);
 
 Clone the repository:
 
-    git clone https://github.com/dpeek/haxe-markdown
+    git clone https://github.com/HaxeFoundation/haxe-markdown
 
 Tell haxelib where your development copy of haxe-markdown is installed:
 
