@@ -363,7 +363,7 @@ class LinkSyntax extends TagSyntax
 	static var linkPattern = '\\](?:('+
 		'\\s?\\[([^\\]]*)\\]'+
 		'|'+
-		'\\s?\\(([^ )]+)(?:[ ]*"([^"]+)"|)\\)'+
+		'\\s?\\((.+?\\)?)(?:[ ]*"([^"]+)"|)\\)'+
 		')|)';
 
 	// The groups matched by this are:
@@ -467,7 +467,7 @@ class ImgSyntax extends TagSyntax
 	static var linkPattern = '\\](?:('+
 		'\\s?\\[([^\\]]*)\\]'+
 		'|'+
-		'\\s?\\(([^ )]+)(?:[ ]*"([^"]+)"|)\\)'+
+		'\\s?\\((.+?\\)?)(?:[ ]*"([^"]+)"|)\\)'+
 		')|)';
 
 	// The groups matched by this are:
