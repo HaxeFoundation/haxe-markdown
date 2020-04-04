@@ -25,7 +25,7 @@ Clone the repository:
 
 Tell haxelib where your development copy of haxe-markdown is installed:
 
-    haxelib dev markdown haxe-markdown/src
+    haxelib dev markdown haxe-markdown
 
 To return to release builds:
 
