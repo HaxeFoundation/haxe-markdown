@@ -1,6 +1,9 @@
 
 haxe-markdown
 =============
+
+[![Haxelib Version](https://img.shields.io/github/tag/HaxeFoundation/haxe-markdown.svg?label=haxelib)](http://lib.haxe.org/p/markdown)
+
 A Markdown parser in Haxe, ported from [dart-markdown](https://github.com/dpeek/dart-markdown).
 
 ### Introduction
