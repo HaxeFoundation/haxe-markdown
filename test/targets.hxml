@@ -3,11 +3,10 @@
 # -lib munit
 # -lib mlib
 # -lib hamcrest
-# -cp src
+# -lib markdown
 
-# -cp test
 # -swf-version 11
-# -swf bin/test/as3_test.swf
+# -swf bin/as3_test.swf
 
 # --next
 
@@ -16,10 +15,9 @@
 # -lib munit
 # -lib mlib
 # -lib hamcrest
-# -cp src
+# -lib markdown
 
-# -cp test
-# -js bin/test/js_test.js
+# -js bin/js_test.js
 
 # --next
 
@@ -28,10 +26,10 @@
 -lib munit
 -lib mlib
 -lib hamcrest
--cp src
+-lib markdown
 
--cp test
--neko bin/test/neko_test.n
+# -neko bin/neko_test.n
+--interp
 
 # --next
 
@@ -40,7 +38,6 @@
 # -lib munit
 # -lib mlib
 # -lib hamcrest
-# -cp src
+# -lib markdown
 
-# -cp test
-# -cpp bin/test/cpp_test
+# -cpp bin/cpp_test

@@ -6,9 +6,8 @@ using StringTools;
 using haxe.io.Path;
 
 class TestSuiteBuilder {
-	public static function build( testDir:String ):Array<Field> {
+	public static function build( dir:String ):Array<Field> {
 		var fields = Context.getBuildFields();
-		var dir = Context.resolvePath(testDir);
 		var files = FileSystem.readDirectory(dir);
 		var p = Context.currentPos();
 		for (f in files) {
@@ -19,7 +18,7 @@ class TestSuiteBuilder {
 				if (FileSystem.exists(outFile)) {
 					var input = File.getContent(inFile);
 					var expected = File.getContent(outFile);
-					var fnName = "test_"+testName.replace("-","_");
+					var fnName = "test_"+testName.replace("-","_").replace("+", "_");
 					var field = {
 						name: fnName, 
 						pos: p, 
