@@ -5,31 +5,27 @@ import markdown.AST;
 /**
 	Translates a parsed AST to HTML.
 **/
-class HtmlRenderer implements NodeVisitor
-{
+class HtmlRenderer implements NodeVisitor {
 	static var BLOCK_TAGS = new EReg('blockquote|h1|h2|h3|h4|h5|h6|hr|p|pre', '');
 
 	var buffer:StringBuf;
 
 	public function new() {}
 
-	public function render(nodes:Array<Node>):String
-	{
+	public function render(nodes:Array<Node>):String {
 		buffer = new StringBuf();
-		for (node in nodes) node.accept(this);
+		for (node in nodes)
+			node.accept(this);
 		return buffer.toString();
 	}
 
-	public function visitText(text:TextNode):Void
-	{
+	public function visitText(text:TextNode):Void {
 		buffer.add(text.text);
 	}
 
-	public function visitElementBefore(element:ElementNode):Bool
-	{
+	public function visitElementBefore(element:ElementNode):Bool {
 		// Hackish. Separate block-level elements with newlines.
-		if (buffer.toString() != "" && BLOCK_TAGS.match(element.tag))
-		{
+		if (buffer.toString() != "" && BLOCK_TAGS.match(element.tag)) {
 			buffer.add('\n');
 		}
 
@@ -40,36 +36,31 @@ class HtmlRenderer implements NodeVisitor
 		// collection.
 		var attributeNames = [for (k in element.attributes.keys()) k];
 		attributeNames.sort(sortAttributes);
-		for (name in attributeNames)
-		{
+		for (name in attributeNames) {
 			buffer.add(' $name="${element.attributes.get(name)}"');
 		}
 
-		if (element.isEmpty())
-		{
+		if (element.isEmpty()) {
 			// Empty element like <hr/>.
 			buffer.add(' />');
 			return false;
-		}
-		else
-		{
+		} else {
 			buffer.add('>');
 			return true;
 		}
 	}
 
-	public function visitElementAfter(element:ElementNode):Void
-	{
+	public function visitElementAfter(element:ElementNode):Void {
 		buffer.add('</${element.tag}>');
 	}
 
 	static var attributeOrder = ['src', 'alt'];
 
-	static function sortAttributes(a:String, b:String)
-	{
+	static function sortAttributes(a:String, b:String) {
 		var ia = attributeOrder.indexOf(a);
 		var ib = attributeOrder.indexOf(a);
-		if (ia > -1 && ib > -1) return ia - ib;
+		if (ia > -1 && ib > -1)
+			return ia - ib;
 		return Reflect.compare(a, b);
 	}
 }

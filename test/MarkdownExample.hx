@@ -1,7 +1,5 @@
-class MarkdownExample
-{
-	public static var minimatch = 
-"# MiniMatch
+class MarkdownExample {
+	public static var minimatch = "# MiniMatch
 
 A Haxe port of the node.js [minimatch](http://github.com/isaacs/minimatch) 
 library by [Isaac Z. Schlueter](http://github.com/isaacs)

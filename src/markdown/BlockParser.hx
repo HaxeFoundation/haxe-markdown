@@ -1,16 +1,15 @@
 package markdown;
 
-import markdown.AST;
 import Markdown;
+import markdown.AST;
+
 using StringTools;
-using Lambda;
 
 /**
 	Maintains the internal state needed to parse a series of lines into blocks
 	of markdown suitable for further inline parsing.
 **/
-class BlockParser
-{
+class BlockParser {
 	// the lines being parsed
 	public var lines(default, null):Array<String>;
 
@@ -20,8 +19,7 @@ class BlockParser
 	// Index of the current line.
 	public var pos(default, null):Int;
 
-	public function new(lines:Array<String>, document:Document)
-	{
+	public function new(lines:Array<String>, document:Document) {
 		this.lines = lines;
 		this.document = document;
 		this.pos = 0;
@@ -29,41 +27,46 @@ class BlockParser
 
 	// Gets the current line.
 	public var current(get, never):String;
-	inline function get_current() return lines[pos];
+
+	inline function get_current()
+		return lines[pos];
 
 	// Gets the line after the current one or `null` if there is none.
 	public var next(get, never):String;
-	function get_next()
-	{
+
+	function get_next() {
 		// Don't read past the end.
-		if (pos >= lines.length - 1) return null;
+		if (pos >= lines.length - 1)
+			return null;
 		return lines[pos + 1];
 	}
 
 	// Move to the next line.
-	public function advance():Void pos++;
+	public function advance():Void
+		pos++;
 
 	// Are we there yet?
 	public var isDone(get, never):Bool;
-	inline function get_isDone() return pos >= lines.length;
+
+	inline function get_isDone()
+		return pos >= lines.length;
 
 	// Gets whether or not the current line matches the given pattern.
-	public function matches(ereg:EReg):Bool
-	{
-		if (isDone) return false;
+	public function matches(ereg:EReg):Bool {
+		if (isDone)
+			return false;
 		return ereg.match(current);
 	}
 
 	// Gets whether or not the current line matches the given pattern.
-	public function matchesNext(ereg:EReg):Bool
-	{
-		if (next == null) return false;
+	public function matchesNext(ereg:EReg):Bool {
+		if (next == null)
+			return false;
 		return ereg.match(next);
 	}
 }
 
-class BlockSyntax
-{
+class BlockSyntax {
 	/**
 		The line contains only whitespace or is empty.
 	**/
@@ -113,7 +116,7 @@ class BlockSyntax
 		after.
 	**/
 	static var RE_UL = new EReg('^[ ]{0,3}[*+-][ \\t]+(.*)$', '');
-	
+
 	/**
 		A line starting with a number like `123.`. May have up to three leading
 		spaces before the marker and any number of spaces or tabs after.
@@ -126,38 +129,26 @@ class BlockSyntax
 	**/
 	public static var syntaxes(get, null):Array<BlockSyntax>;
 
-	static function get_syntaxes():Array<BlockSyntax>
-	{
-		if (syntaxes == null)
-		{
+	static function get_syntaxes():Array<BlockSyntax> {
+		if (syntaxes == null) {
 			syntaxes = [
-				new EmptyBlockSyntax(),
-				new BlockHtmlSyntax(),
-				new SetextHeaderSyntax(),
-				new HeaderSyntax(),
-				new CodeBlockSyntax(),
-				new GitHubCodeBlockSyntax(),
-				new BlockquoteSyntax(),
-				new HorizontalRuleSyntax(),
-				new UnorderedListSyntax(),
-				new OrderedListSyntax(),
-				new TableSyntax(),
-				new ParagraphSyntax()
-			];
+				new EmptyBlockSyntax(), new BlockHtmlSyntax(), new SetextHeaderSyntax(), new HeaderSyntax(), new CodeBlockSyntax(),
+				new GitHubCodeBlockSyntax(), new BlockquoteSyntax(), new HorizontalRuleSyntax(), new UnorderedListSyntax(), new OrderedListSyntax(),
+				new TableSyntax(), new ParagraphSyntax()];
 		}
 		return syntaxes;
 	}
 
 	/**
-		Gets whether or not [parser]'s current line should end the 
+		Gets whether or not [parser]'s current line should end the
 		previous block.
 	**/
-	public static function isAtBlockEnd(parser:BlockParser):Bool
-	{
-		if (parser.isDone) return true;
-		for (syntax in syntaxes)
-		{
-			if (syntax.canParse(parser) && syntax.canEndBlock) return true;
+	public static function isAtBlockEnd(parser:BlockParser):Bool {
+		if (parser.isDone)
+			return true;
+		for (syntax in syntaxes) {
+			if (syntax.canParse(parser) && syntax.canEndBlock)
+				return true;
 		}
 		return false;
 	}
@@ -168,34 +159,31 @@ class BlockSyntax
 		Gets the regex used to identify the beginning of this block, if any.
 	**/
 	public var pattern(get, never):EReg;
-	function get_pattern():EReg
-	{
+
+	function get_pattern():EReg {
 		return null;
 	}
 
 	public var canEndBlock(get, never):Bool;
-	function get_canEndBlock():Bool
-	{
+
+	function get_canEndBlock():Bool {
 		return true;
 	}
 
-	public function canParse(parser:BlockParser):Bool
-	{
+	public function canParse(parser:BlockParser):Bool {
 		return pattern.match(parser.current);
 	}
 
-	public function parse(parser:BlockParser):Node
-	{
+	public function parse(parser:BlockParser):Node {
 		return null;
 	}
 
-	public function parseChildLines(parser:BlockParser):Array<String>
-	{
+	public function parseChildLines(parser:BlockParser):Array<String> {
 		var childLines = [];
 
-		while (!parser.isDone)
-		{
-			if (!pattern.match(parser.current)) break;
+		while (!parser.isDone) {
+			if (!pattern.match(parser.current))
+				break;
 			childLines.push(pattern.matched(1));
 			parser.advance();
 		}
@@ -204,17 +192,16 @@ class BlockSyntax
 	}
 }
 
-class EmptyBlockSyntax extends BlockSyntax
-{
-	public function new() { super(); }
+class EmptyBlockSyntax extends BlockSyntax {
+	public function new() {
+		super();
+	}
 
-	override function get_pattern():EReg
-	{
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_EMPTY;
 	}
 
-	override public function parse(parser:BlockParser)
-	{
+	override public function parse(parser:BlockParser) {
 		parser.advance();
 		// Don't actually emit anything.
 		return null;
@@ -224,19 +211,18 @@ class EmptyBlockSyntax extends BlockSyntax
 /**
 	Parses setext-style headers.
 **/
-class SetextHeaderSyntax extends BlockSyntax
-{
-	public function new() { super(); }
-
-	override public function canParse(parser:BlockParser)
-	{
-		// Note: matches *next* line, not the current one. We're looking for the
-			// underlining after this line.
-			return parser.matchesNext(BlockSyntax.RE_SETEXT);
+class SetextHeaderSyntax extends BlockSyntax {
+	public function new() {
+		super();
 	}
 
-	override public function parse(parser:BlockParser)
-	{
+	override public function canParse(parser:BlockParser) {
+		// Note: matches *next* line, not the current one. We're looking for the
+		// underlining after this line.
+		return parser.matchesNext(BlockSyntax.RE_SETEXT);
+	}
+
+	override public function parse(parser:BlockParser) {
 		var re = BlockSyntax.RE_SETEXT;
 		re.match(parser.next);
 
@@ -251,17 +237,16 @@ class SetextHeaderSyntax extends BlockSyntax
 /**
 	Parses atx-style headers: `## Header ##`.
 **/
-class HeaderSyntax extends BlockSyntax
-{
-	public function new() { super(); }
+class HeaderSyntax extends BlockSyntax {
+	public function new() {
+		super();
+	}
 
-	override function get_pattern():EReg
-	{
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_HEADER;
 	}
 
-	override public function parse(parser:BlockParser)
-	{
+	override public function parse(parser:BlockParser) {
 		pattern.match(parser.current);
 		parser.advance();
 		var level = pattern.matched(1).length;
@@ -270,41 +255,30 @@ class HeaderSyntax extends BlockSyntax
 	}
 }
 
-
 // Parses email-style blockquotes: `> quote`.
-class BlockquoteSyntax extends BlockSyntax
-{
-	override function get_pattern():EReg
-	{
+class BlockquoteSyntax extends BlockSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_BLOCKQUOTE;
 	}
 
-	override public function parseChildLines(parser:BlockParser):Array<String>
-	{
+	override public function parseChildLines(parser:BlockParser):Array<String> {
 		var childLines = [];
 
-		while (!parser.isDone)
-		{
-			if (pattern.match(parser.current))
-			{
+		while (!parser.isDone) {
+			if (pattern.match(parser.current)) {
 				childLines.push(pattern.matched(1));
 				parser.advance();
-			}
-			else
-			{
+			} else {
 				// If there's a blockquote, then a newline, then a blockquote, keep the
 				// blockquotes together.
 				var nextMatch = parser.next != null ? pattern.match(parser.next) : false;
 
-				if (parser.current.trim() == '' && nextMatch)
-				{
+				if (parser.current.trim() == '' && nextMatch) {
 					childLines.push('');
 					childLines.push(pattern.matched(1));
 					parser.advance();
 					parser.advance();
-				}
-				else
-				{
+				} else {
 					break;
 				}
 			}
@@ -313,8 +287,7 @@ class BlockquoteSyntax extends BlockSyntax
 		return childLines;
 	}
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		var childLines = parseChildLines(parser);
 
 		// Recursively parse the contents of the blockquote.
@@ -325,39 +298,29 @@ class BlockquoteSyntax extends BlockSyntax
 }
 
 // Parses preformatted code blocks that are indented four spaces.
-class CodeBlockSyntax extends BlockSyntax
-{
-	override function get_pattern():EReg
-	{
+class CodeBlockSyntax extends BlockSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_INDENT;
 	}
 
-	override public function parseChildLines(parser:BlockParser):Array<String>
-	{
+	override public function parseChildLines(parser:BlockParser):Array<String> {
 		var childLines = [];
 
-		while (!parser.isDone)
-		{
-			if (pattern.match(parser.current))
-			{
+		while (!parser.isDone) {
+			if (pattern.match(parser.current)) {
 				childLines.push(pattern.matched(1));
 				parser.advance();
-			}
-			else
-			{
+			} else {
 				// If there's a codeblock, then a newline, then a codeblock, keep the
 				// code blocks together.
 				var nextMatch = parser.next != null ? pattern.match(parser.next) : false;
 
-				if (parser.current.trim() == '' && nextMatch)
-				{
+				if (parser.current.trim() == '' && nextMatch) {
 					childLines.push('');
 					childLines.push(pattern.matched(1));
 					parser.advance();
 					parser.advance();
-				}
-				else
-				{
+				} else {
 					break;
 				}
 			}
@@ -366,8 +329,7 @@ class CodeBlockSyntax extends BlockSyntax
 		return childLines;
 	}
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		var childLines = parseChildLines(parser);
 
 		// The Markdown tests expect a trailing newline.
@@ -381,20 +343,16 @@ class CodeBlockSyntax extends BlockSyntax
 }
 
 // Parses preformatted code blocks between two ``` sequences.
-class GitHubCodeBlockSyntax extends BlockSyntax
-{
-	override function get_pattern():EReg
-	{
+class GitHubCodeBlockSyntax extends BlockSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_CODE;
 	}
 
-	override public function parseChildLines(parser:BlockParser):Array<String>
-	{
+	override public function parseChildLines(parser:BlockParser):Array<String> {
 		var childLines = [];
 		parser.advance();
-		
-		while (!parser.isDone)
-		{
+
+		while (!parser.isDone) {
 			if (!pattern.match(parser.current)) {
 				childLines.push(parser.current);
 				parser.advance();
@@ -406,12 +364,11 @@ class GitHubCodeBlockSyntax extends BlockSyntax
 		return childLines;
 	}
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		// Get the syntax identifier, if there is one.
 		var syntax = pattern.matched(1);
 		var childLines = parseChildLines(parser);
-		
+
 		var code:ElementNode = null;
 		var source = childLines.join('\n');
 
@@ -421,7 +378,7 @@ class GitHubCodeBlockSyntax extends BlockSyntax
 		} else {
 			code = ElementNode.text('code', source.htmlEscape());
 			if (syntax != null && syntax.length > 0)
-				code.attributes.set('class', 'prettyprint '+syntax);
+				code.attributes.set('class', 'prettyprint ' + syntax);
 		}
 
 		return new ElementNode('pre', [code]);
@@ -429,15 +386,12 @@ class GitHubCodeBlockSyntax extends BlockSyntax
 }
 
 // Parses horizontal rules like `---`, `_ _ _`, `*	*	*`, etc.
-class HorizontalRuleSyntax extends BlockSyntax
-{
-	override function get_pattern():EReg
-	{
+class HorizontalRuleSyntax extends BlockSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_HR;
 	}
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		parser.advance();
 		return ElementNode.empty('hr');
 	}
@@ -453,22 +407,19 @@ class HorizontalRuleSyntax extends BlockSyntax
 //		 it hits the next block.
 // 3.	Absolutely no HTML parsing or validation is done. We're a markdown
 //		 parser not an HTML parser!
-class BlockHtmlSyntax extends BlockSyntax
-{
-	override function get_pattern():EReg
-	{
+class BlockHtmlSyntax extends BlockSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_HTML;
 	}
 
-	override function get_canEndBlock() return false;
+	override function get_canEndBlock()
+		return false;
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		var childLines = [];
 
 		// Eat until we hit a blank line.
-		while (!parser.isDone && !parser.matches(BlockSyntax.RE_EMPTY))
-		{
+		while (!parser.isDone && !parser.matches(BlockSyntax.RE_EMPTY)) {
 			childLines.push(parser.current);
 			parser.advance();
 		}
@@ -477,34 +428,29 @@ class BlockHtmlSyntax extends BlockSyntax
 	}
 }
 
-class ListItem
-{
+class ListItem {
 	public var forceBlock:Bool = false;
 	public var lines(default, null):Array<String>;
 
-	public function new(lines:Array<String>)
-	{
+	public function new(lines:Array<String>) {
 		this.lines = lines;
 	}
 }
 
 // Parses paragraphs of regular text.
-class ParagraphSyntax extends BlockSyntax
-{
-	override function get_canEndBlock() return false;
+class ParagraphSyntax extends BlockSyntax {
+	override function get_canEndBlock()
+		return false;
 
-	override public function canParse(parser:BlockParser):Bool
-	{
+	override public function canParse(parser:BlockParser):Bool {
 		return true;
 	}
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		var childLines = [];
 
 		// Eat until we hit something that ends a paragraph.
-		while (!BlockSyntax.isAtBlockEnd(parser))
-		{
+		while (!BlockSyntax.isAtBlockEnd(parser)) {
 			childLines.push(StringTools.ltrim(parser.current));
 			parser.advance();
 		}
@@ -515,30 +461,24 @@ class ParagraphSyntax extends BlockSyntax
 }
 
 // Base class for both ordered and unordered lists.
-class ListSyntax extends BlockSyntax
-{
-	override function get_canEndBlock()
-	{
+class ListSyntax extends BlockSyntax {
+	override function get_canEndBlock() {
 		return false;
 	}
 
 	public var listTag(default, null):String;
 
-	public function new(listTag:String)
-	{
+	public function new(listTag:String) {
 		super();
 		this.listTag = listTag;
 	}
 
-	override public function parse(parser:BlockParser):Node
-	{
+	override public function parse(parser:BlockParser):Node {
 		var items = [];
 		var childLines = [];
 
-		function endItem()
-		{
-			if (childLines.length > 0)
-			{
+		function endItem() {
+			if (childLines.length > 0) {
 				items.push(new ListItem(childLines));
 				childLines = [];
 			}
@@ -550,35 +490,26 @@ class ListSyntax extends BlockSyntax
 			return pattern.match(parser.current);
 		}
 
-		while (!parser.isDone)
-		{
-			if (tryMatch(BlockSyntax.RE_EMPTY))
-			{
+		while (!parser.isDone) {
+			if (tryMatch(BlockSyntax.RE_EMPTY)) {
 				// Add a blank line to the current list item.
 				childLines.push('');
-			}
-			else if (tryMatch(BlockSyntax.RE_UL) || tryMatch(BlockSyntax.RE_OL))
-			{
+			} else if (tryMatch(BlockSyntax.RE_UL) || tryMatch(BlockSyntax.RE_OL)) {
 				// End the current list item and start a new one.
 				endItem();
 				childLines.push(match.matched(1));
-			}
-			else if (tryMatch(BlockSyntax.RE_INDENT))
-			{
+			} else if (tryMatch(BlockSyntax.RE_INDENT)) {
 				// Strip off indent and add to current item.
 				childLines.push(match.matched(1));
-			}
-			else if (BlockSyntax.isAtBlockEnd(parser))
-			{
+			} else if (BlockSyntax.isAtBlockEnd(parser)) {
 				// Done with the list.
 				break;
-			}
-			else
-			{
+			} else {
 				// Anything else is paragraph text or other stuff that can be in a list
 				// item. However, if the previous item is a blank line, this means we're
 				// done with the list and are starting a new top-level paragraph.
-				if ((childLines.length > 0) && (childLines[childLines.length-1] == '')) break;
+				if ((childLines.length > 0) && (childLines[childLines.length - 1] == ''))
+					break;
 				childLines.push(parser.current);
 			}
 			parser.advance();
@@ -625,24 +556,18 @@ class ListSyntax extends BlockSyntax
 		// Remove any trailing empty lines and note which items are separated by
 		// empty lines. Do this before seeing which items are single-line so that
 		// trailing empty lines on the last item don't force it into being a block.
-		for (i in 0...items.length)
-		{
+		for (i in 0...items.length) {
 			var len = items[i].lines.length;
-			for (jj in 1...len+1)
-			{
+			for (jj in 1...len + 1) {
 				var j = len - jj;
-				if (BlockSyntax.RE_EMPTY.match(items[i].lines[j]))
-				{
+				if (BlockSyntax.RE_EMPTY.match(items[i].lines[j])) {
 					// Found an empty line. Item and one after it are blocks.
-					if (i < items.length - 1)
-					{
+					if (i < items.length - 1) {
 						items[i].forceBlock = true;
 						items[i + 1].forceBlock = true;
 					}
 					items[i].lines.pop();
-				}
-				else
-				{
+				} else {
 					break;
 				}
 			}
@@ -650,8 +575,7 @@ class ListSyntax extends BlockSyntax
 
 		// Convert the list items to Nodes.
 		var itemNodes:Array<Node> = [];
-		for (item in items)
-		{
+		for (item in items) {
 			var blockItem = item.forceBlock || (item.lines.length > 1);
 
 			// See if it matches some block parser.
@@ -664,40 +588,33 @@ class ListSyntax extends BlockSyntax
 				BlockSyntax.RE_OL
 			];
 
-			if (!blockItem)
-			{
-				for (pattern in blocksInList)
-				{
-					if (pattern.match(item.lines[0]))
-					{
+			if (!blockItem) {
+				for (pattern in blocksInList) {
+					if (pattern.match(item.lines[0])) {
 						blockItem = true;
 						break;
 					}
 				}
 			}
-			
+
 			// Parse the item as a block or inline.
-			if (blockItem)
-			{
+			if (blockItem) {
 				// Block list item.
 				var children = parser.document.parseLines(item.lines);
 
 				// if we have a single p child we might have been forced into block
 				// mode by line breaks. if not forceBlock (empty line before/after)
 				// we can use text of p as li child <li><p>foo</p></li> -> <li>foo</li>
-				if (!item.forceBlock && children.length == 1)
-				{
-					if (Std.is(children[0], ElementNode))
-					{
+				if (!item.forceBlock && children.length == 1) {
+					if (Std.is(children[0], ElementNode)) {
 						var node:ElementNode = cast children[0];
-						if (node.tag == 'p') children = node.children;
+						if (node.tag == 'p')
+							children = node.children;
 					}
 				}
 
 				itemNodes.push(new ElementNode('li', children));
-			}
-			else
-			{
+			} else {
 				// Raw list item.
 				var contents = parser.document.parseInline(item.lines[0]);
 				itemNodes.push(new ElementNode('li', contents));
@@ -709,63 +626,51 @@ class ListSyntax extends BlockSyntax
 }
 
 // Parses unordered lists.
-class UnorderedListSyntax extends ListSyntax
-{
-	override function get_pattern():EReg
-	{
+class UnorderedListSyntax extends ListSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_UL;
 	}
 
-	public function new()
-	{
+	public function new() {
 		super('ul');
 	}
 }
 
 // Parses ordered lists.
-class OrderedListSyntax extends ListSyntax
-{
-	override function get_pattern():EReg
-	{
+class OrderedListSyntax extends ListSyntax {
+	override function get_pattern():EReg {
 		return BlockSyntax.RE_OL;
 	}
 
-	public function new()
-	{
+	public function new() {
 		super('ol');
 	}
 }
 
-class TableSyntax extends BlockSyntax
-{
+class TableSyntax extends BlockSyntax {
 	static var TABLE_PATTERN = new EReg('^(.+?:?\\|:?)+(.+)$', '');
 	static var CELL_PATTERN = new EReg('(\\|)?([^\\|]+)(\\|)?', 'g');
 
-	public function new()
-	{
+	public function new() {
 		super();
 	}
 
-	override function get_pattern():EReg
-	{
+	override function get_pattern():EReg {
 		return TABLE_PATTERN;
 	}
 
-	override function get_canEndBlock()
-	{
+	override function get_canEndBlock() {
 		return false;
 	}
-  
-	override public function parse(parser:BlockParser):Node
-	{
+
+	override public function parse(parser:BlockParser):Node {
 		var lines = [];
 
-		while (!parser.isDone && parser.matches(TABLE_PATTERN))
-		{
+		while (!parser.isDone && parser.matches(TABLE_PATTERN)) {
 			lines.push(parser.current);
 			parser.advance();
 		}
-		
+
 		var heads:Array<Node> = [];
 		var rows:Array<Node> = [];
 		var align = [];
@@ -776,46 +681,42 @@ class TableSyntax extends BlockSyntax
 		// get alignment from separator line
 		var aligns = [];
 		if (alignLine != null) {
-			CELL_PATTERN.map(alignLine, function(e){
+			CELL_PATTERN.map(alignLine, function(e) {
 				var text = e.matched(2);
-				var align = text.charAt(0) == ':' 
-					? text.charAt(text.length - 1) == ':' ? 'center' : 'left'
-					: text.charAt(text.length - 1) == ':' ? 'right' : 'left';
+				var align = text.charAt(0) == ':' ? text.charAt(text.length - 1) == ':' ? 'center' : 'left' : text.charAt(text.length - 1) == ':' ? 'right' : 'left';
 				aligns.push(align);
 				return '';
 			});
 		}
-		
+
 		// create thead
 		var index = 0;
-		CELL_PATTERN.map(headLine, function(e){
+		CELL_PATTERN.map(headLine, function(e) {
 			var text = StringTools.trim(e.matched(2));
 			var cell = new ElementNode('th', parser.document.parseInline(text));
-			if (aligns[index] != 'left') cell.attributes.set('align', aligns[index]);
+			if (aligns[index] != 'left')
+				cell.attributes.set('align', aligns[index]);
 			heads.push(cell);
 			index += 1;
 			return '';
 		});
 
-		for (line in lines)
-		{
+		for (line in lines) {
 			var cols:Array<Node> = [];
 			rows.push(new ElementNode('tr', cols));
 
 			var index = 0;
-			CELL_PATTERN.map(line, function(e){
+			CELL_PATTERN.map(line, function(e) {
 				var text = StringTools.trim(e.matched(2));
 				var cell = new ElementNode('td', parser.document.parseInline(text));
-				if (aligns[index] != 'left') cell.attributes.set('align', aligns[index]);
+				if (aligns[index] != 'left')
+					cell.attributes.set('align', aligns[index]);
 				cols.push(cell);
 				index += 1;
 				return '';
 			});
 		}
 
-		return new ElementNode('table', [
-			new ElementNode('thead', heads), 
-			new ElementNode('tbody', rows)
-		]);
+		return new ElementNode('table', [new ElementNode('thead', heads), new ElementNode('tbody', rows)]);
 	}
 }

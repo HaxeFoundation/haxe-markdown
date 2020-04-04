@@ -4,8 +4,7 @@ package markdown;
 	Base class for any AST item. Roughly corresponds to Node in the DOM. Will
 	be either an ElementNode or TextNode.
 **/
-interface Node
-{
+interface Node {
 	function accept(visitor:NodeVisitor):Void;
 }
 
@@ -13,8 +12,7 @@ interface Node
 	Visitor pattern for the AST. Renderers or other AST transformers should
 	implement this.
 **/
-interface NodeVisitor
-{
+interface NodeVisitor {
 	/**
 		Called when a TextNode has been reached.
 	**/
@@ -36,20 +34,16 @@ interface NodeVisitor
 /**
 	A named tag that can contain other nodes.
 **/
-class ElementNode implements Node
-{
-	public static function empty(tag:String):ElementNode
-	{
+class ElementNode implements Node {
+	public static function empty(tag:String):ElementNode {
 		return new ElementNode(tag, null);
 	}
 
-	public static function withTag(tag:String):ElementNode
-	{
+	public static function withTag(tag:String):ElementNode {
 		return new ElementNode(tag, []);
 	}
 
-	public static function text(tag:String, text:String):ElementNode
-	{
+	public static function text(tag:String, text:String):ElementNode {
 		return new ElementNode(tag, [new TextNode(text)]);
 	}
 
@@ -57,23 +51,20 @@ class ElementNode implements Node
 	public var children(default, null):Array<Node>;
 	public var attributes(default, null):Map<String, String>;
 
-	public function new(tag:String, children:Array<Node>)
-	{
+	public function new(tag:String, children:Array<Node>) {
 		this.tag = tag;
 		this.children = children;
 		this.attributes = new Map();
 	}
 
-	inline public function isEmpty():Bool
-	{
+	inline public function isEmpty():Bool {
 		return children == null;
 	}
 
-	public function accept(visitor:NodeVisitor):Void
-	{
-		if (visitor.visitElementBefore(this))
-		{
-			for (child in children) child.accept(visitor);
+	public function accept(visitor:NodeVisitor):Void {
+		if (visitor.visitElementBefore(this)) {
+			for (child in children)
+				child.accept(visitor);
 			visitor.visitElementAfter(this);
 		}
 	}
@@ -82,14 +73,13 @@ class ElementNode implements Node
 /**
 	A plain text element.
 **/
-class TextNode implements Node
-{
+class TextNode implements Node {
 	public var text(default, null):String;
 
-	public function new(text:String) this.text = text;
+	public function new(text:String)
+		this.text = text;
 
-	public function accept(visitor:NodeVisitor):Void
-	{
+	public function accept(visitor:NodeVisitor):Void {
 		visitor.visitText(this);
 	}
 }
