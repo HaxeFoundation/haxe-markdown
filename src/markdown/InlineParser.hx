@@ -317,7 +317,7 @@ class LinkSyntax extends TagSyntax {
 	// The regex for the end of a link needs to handle both reference style and
 	// inline styles as well as optional titles for inline links. To make that
 	// a bit more palatable, this breaks it into pieces.
-	static var linkPattern = '\\](?:(' + '\\s?\\[([^\\]]*)\\]' + '|' + '\\s?\\((.+?\\)?)(?:[ ]*"([^"]+)"|)\\)' + ')|)';
+	static var linkPattern = '\\](?:(' + '\\s?\\[([^\\]]*)\\]' + '|' + '\\s?\\(([^ )]+)(?:[ ]*"([^"]+)"|)\\)' + ')|)';
 
 	// The groups matched by this are:
 	// 1: Will be non-empty if it's either a ref or inline link. Will be empty
@@ -413,7 +413,7 @@ class ImgSyntax extends TagSyntax {
 	// The regex for the end of a link needs to handle both reference style and
 	// inline styles as well as optional titles for inline links. To make that
 	// a bit more palatable, this breaks it into pieces.
-	static var linkPattern = '\\](?:(' + '\\s?\\[([^\\]]*)\\]' + '|' + '\\s?\\((.+?\\)?)(?:[ ]*"([^"]+)"|)\\)' + ')|)';
+	static var linkPattern = '\\](?:(' + '\\s?\\[([^\\]]*)\\]' + '|' + '\\s?\\(([^ )]+)(?:[ ]*"([^"]+)"|)\\)' + ')|)';
 
 	// The groups matched by this are:
 	// 1: Will be non-empty if it's either a ref or inline link. Will be empty

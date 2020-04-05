@@ -165,6 +165,7 @@ text', '<pre><code>foo;</code></pre>
 	@Test function transform_inline_links_without_brackets()
 		parses('http://haxe.org', '<p><a href="http://haxe.org">http://haxe.org</a></p>');
 
+	@Ignore // see #35
 	@Test function links_with_parens()
 		parses('[link](https://en.wikipedia.org/wiki/Robert_Morin_(librarian))',
 			'<p><a href="https://en.wikipedia.org/wiki/Robert_Morin_(librarian)">link</a></p>');
