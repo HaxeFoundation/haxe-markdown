@@ -2,7 +2,9 @@
 haxe-markdown
 =============
 
-[![Haxelib Version](https://img.shields.io/github/tag/HaxeFoundation/haxe-markdown.svg?label=haxelib)](http://lib.haxe.org/p/markdown)
+[![Haxelib Version](https://badgen.net/haxelib/v/markdown)](https://lib.haxe.org/p/markdown)
+[![Haxelib Downloads](https://badgen.net/haxelib/d/markdown?color=blue)](https://lib.haxe.org/p/markdown)
+[![Haxelib License](https://badgen.net/haxelib/license/markdown)](LICENSE.md)
 
 A Markdown parser in Haxe, ported from [dart-markdown](https://github.com/dpeek/dart-markdown).
 
