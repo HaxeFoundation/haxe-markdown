@@ -4,8 +4,8 @@
 	"license": "MIT",
 	"tags": ["markdown"],
 	"description": "A markdown library for Haxe",
-	"version": "1.1.1",
-	"releasenote": "Fix a regression related to link rendering with parens.",
+	"version": "1.1.2",
+	"releasenote": "Fix Std.is() deprecation warnings with Haxe 4.2.",
 	"contributors": ["HaxeFoundation", "dpeek"],
 	"classPath": "src"
 }
