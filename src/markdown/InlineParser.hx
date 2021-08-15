@@ -140,7 +140,7 @@ class InlineParser {
 			var nodes = stack[stack.length - 1].children;
 
 			// If the previous node is text too, just append.
-			if ((nodes.length > 0) && (Std.is(nodes[nodes.length - 1], TextNode))) {
+			if ((nodes.length > 0) && ((nodes[nodes.length - 1] is TextNode))) {
 				var lastNode:TextNode = cast nodes[nodes.length - 1];
 				var newNode = createText('${lastNode.text}$text');
 				nodes[nodes.length - 1] = newNode;
@@ -347,7 +347,7 @@ class LinkSyntax extends TagSyntax {
 			// TODO(rnystrom): Do we want to relax this?
 			if (state.children.length != 1)
 				return false;
-			if (!Std.is(state.children[0], TextNode))
+			if (!(state.children[0] is TextNode))
 				return false;
 
 			var link:TextNode = cast state.children[0];
@@ -443,7 +443,7 @@ class ImgSyntax extends TagSyntax {
 			// TODO(rnystrom): Do we want to relax this?
 			if (state.children.length != 1)
 				return false;
-			if (!Std.is(state.children[0], TextNode))
+			if (!(state.children[0] is TextNode))
 				return false;
 
 			var link:TextNode = cast state.children[0];
@@ -490,7 +490,7 @@ class ImgSyntax extends TagSyntax {
 
 		var img = new ElementNode('img', null);
 		img.attributes.set('src', url.htmlEscape());
-		if (state.children.length == 1 && Std.is(state.children[0], TextNode)) {
+		if (state.children.length == 1 && (state.children[0] is TextNode)) {
 			var alt:TextNode = cast state.children[0];
 			img.attributes.set('alt', alt.text);
 		}

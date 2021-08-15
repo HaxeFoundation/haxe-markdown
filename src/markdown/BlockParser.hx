@@ -606,7 +606,7 @@ class ListSyntax extends BlockSyntax {
 				// mode by line breaks. if not forceBlock (empty line before/after)
 				// we can use text of p as li child <li><p>foo</p></li> -> <li>foo</li>
 				if (!item.forceBlock && children.length == 1) {
-					if (Std.is(children[0], ElementNode)) {
+					if ((children[0] is ElementNode)) {
 						var node:ElementNode = cast children[0];
 						if (node.tag == 'p')
 							children = node.children;
